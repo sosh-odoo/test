@@ -1,0 +1,25 @@
+name: Notify Dependent Repositories
+
+on:
+  push:
+    branches:
+      - master  # Adjust the branch if necessary
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout submodule repository
+        uses: actions/checkout@v3
+
+      - name: Notify dependent repositories
+        run: |
+          echo "Notifying dependent repositories..."
+          DEPENDENT_REPOS=("repo1" "repo2" "repo3")  # List of repositories that depend on this submodule
+          for repo in "${DEPENDENT_REPOS[@]}"; do
+            curl -X POST \
+              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              -d '{"event_type": "submodule-update"}' \
+              https://api.github.com/repos/owner/${repo}/dispatches
+          done
