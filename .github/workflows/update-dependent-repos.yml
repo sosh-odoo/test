@@ -15,7 +15,7 @@ jobs:
       - name: Notify dependent repositories
         run: |
           echo "Notifying dependent repositories..."
-          DEPENDENT_REPOS=("repo1" "repo2" "repo3")  # List of repositories that depend on this submodule
+          DEPENDENT_REPOS=("test1" "test2")  # List of repositories that depend on this submodule
           for repo in "${DEPENDENT_REPOS[@]}"; do
             curl -X POST \
               -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
