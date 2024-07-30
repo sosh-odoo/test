@@ -4,3 +4,4 @@ ijkl
 mnop
 qwerty
 uiopppp
+clear
