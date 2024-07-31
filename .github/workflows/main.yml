@@ -18,6 +18,7 @@ jobs:
         run: |
           PARENT_REPO_URL=$(git config --get remote.origin.url | sed 's/\/[^\/]*$//')
           echo "PARENT_REPO_URL=$PARENT_REPO_URL" >> $GITHUB_ENV
+          echo "parent repo ${PARENT_REPO_URL}"
 
       - name: Send notification to parent repository
         uses: peter-evans/repository-dispatch@v1
