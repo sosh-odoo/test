@@ -40,7 +40,7 @@ jobs:
                             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                             -H "X-GitHub-Api-Version: 2022-11-28" \
                             -d '{"event_type":"submodule-update"}' \
-                            "https://api.github.com/repos/sosh-odoo/$repo/dispatches")
+                            "https://api.github.com/repos/$repo/dispatches")
                 
                 # Optional: Check if the result contains any errors
                 if echo "$result" | grep -q '"message":'; then
