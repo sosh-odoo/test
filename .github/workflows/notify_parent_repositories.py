@@ -12,7 +12,7 @@ def get_git_request(url,token):
     if response.status_code == 200:
         reponse = response.json()
         print("Your data:")
-        print("---------------")
+        print("--------------")
         print(f"Response: {reponse}")
     else:
         print(f"Error: {response.status_code}")
