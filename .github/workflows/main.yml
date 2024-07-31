@@ -1,29 +1,24 @@
-name: Notify Parent Repositories
+name: 'submodule updates'
 
-on:
+on: 
   push:
     branches:
       - master
 
 jobs:
-  notify:
+  test:
     runs-on: ubuntu-latest
+    env:
+      PARENT_REPOSITORY: 'sosh-odoo/test2'
+      CHECKOUT_BRANCH: 'master'
+      OWNER: 'sosh-odoo'
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Get parent repositories
-        run: |
-          echo "Fetching parent repositories..."
-          PARENT_REPOS=$(gh api /repos/${GITHUB_REPO}/submodule-users | jq -r '.[] |.full_name')
-          echo "Parent repositories: $PARENT_REPOS"
-          echo "PARENT_REPOS=$PARENT_REPOS" >> $GITHUB_ENV
-
-      - name: Notify parent repositories
-        run: |
-          echo "Notifying parent repositories..."
-          for REPO in $PARENT_REPOS; do
-            echo "Notifying $REPO..."
-            gh api --method POST /repos/$REPO/actions/workflows/update-submodule/dispatches --input '{"ref":"main"}'
-            echo "Response: $?"
-          done
+    - uses: actions/checkout@v2
+    - name: update submodule
+      id: update_submodule
+      uses: ./
+      with: 
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        parent_repository: ${{ env.PARENT_REPOSITORY }}
+        checkout_branch: ${{ env.CHECKOUT_BRANCH}}
+        owner: ${{ env.OWNER }}
