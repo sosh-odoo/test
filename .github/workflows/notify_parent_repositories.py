@@ -4,9 +4,6 @@ import subprocess
 import sys
 import requests
 
-# Install PyGithub library
-!pip install PyGithub
-
 # Import PyGithub library
 import github
 
