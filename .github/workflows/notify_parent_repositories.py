@@ -10,9 +10,9 @@ def get_git_request(url,token):
     response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
-        rate_limit_data = response.json()
+        reponse = response.json()
         print("Your data:")
-        print("--------------------")
+        print("---------------")
         print(f"Response: {reponse}")
     else:
         print(f"Error: {response.status_code}")
