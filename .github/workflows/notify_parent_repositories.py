@@ -8,11 +8,11 @@ import requests
 import github
 
 # Authenticate with GitHub
-print("os.environ", os.environ)
 g = github.Github(os.environ["GITHUB_TOKEN"])
-print(dir(g))
+
 # Get the authenticated user
-user = g.get_user()
+user = g.get_user(login=True)
+print(user)
 
 # Loop through each repository and trigger a dispatch event
 for repo in user.get_repos():
