@@ -7,13 +7,15 @@ import requests
 # Import PyGithub library
 import github
 
+# using an access token
+auth = github.Auth.Token("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")
+
 # Authenticate with GitHub
-print(os.environ["GITHUB_TOKEN"])
-g = github.Github(os.environ["GITHUB_TOKEN"])
+g = github.Github(auth=auth)
+
 print("git hub token:", g)
 # Get the authenticated user
 user = g.get_user()
-print(dir(user))
 print("git hub user:", user._login)
 # Loop through each repository and trigger a dispatch event
 for repo in user.get_repos():
