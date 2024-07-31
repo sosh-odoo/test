@@ -1,4 +1,4 @@
-import os
+import os, requests
 import json
 from github import Github
 
