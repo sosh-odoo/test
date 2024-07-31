@@ -15,7 +15,7 @@ jobs:
       - name: Get parent repositories
         run: |
           echo "Fetching parent repositories..."
-          PARENT_REPOS=$(git submodule foreach --recursive 'git config --get remote.origin.url')
+          PARENT_REPOS=$(git submodule --quiet foreach --recursive 'echo ${PWD##*/}')
           echo "Parent repositories: $PARENT_REPOS"
           echo "PARENT_REPOS=$PARENT_REPOS" >> $GITHUB_ENV
 
