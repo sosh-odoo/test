@@ -7,6 +7,7 @@ SUBMODULE_REPO = "test"
 
 def search_repositories(query):
     """Search GitHub repositories using a query."""
+    print("os", os.environ)
     url = f"https://api.github.com/search/repositories?q={query}"
     headers = {
         "Authorization": f"token {ACCESS_TOKEN}",
