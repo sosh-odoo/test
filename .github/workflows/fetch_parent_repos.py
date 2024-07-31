@@ -6,7 +6,6 @@ SUBMODULE_REPO = "test"
 
 def search_repositories(token, query):
     """Search GitHub repositories using a query."""
-    print("os", os.environ)
     url = f"https://api.github.com/search/repositories?q={query}"
     headers = {
         "Authorization": f"token {token}",
@@ -15,7 +14,9 @@ def search_repositories(token, query):
     response = requests.get(url, headers=headers)
     
     if response.status_code == 200:
-        return response.json()["items"]
+        repos =  response.json()["items"]
+        print(repos)
+        return repos
     else:
         print(f"Failed to search repositories: {response.status_code} - {response.text}")
         return []
