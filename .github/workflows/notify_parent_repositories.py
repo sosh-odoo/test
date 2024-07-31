@@ -7,11 +7,8 @@ import requests
 # Import PyGithub library
 import github
 
-# using an access token
-auth = github.Auth.Token("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")
-
 # Authenticate with GitHub
-g = github.Github(auth=auth)
+g = github.Github("hp_iiRc88rcA1VgzagMP83CSzvyW2xYUC2sfTN6")
 
 print("git hub token:", g)
 # Get the authenticated user
