@@ -23,17 +23,18 @@ jobs:
           # Loop through each repository and trigger a dispatch event
           for repo in $repos; do
             # Check if the repository contains the submodule
-            url_data = curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                  "https://github.com/sosh-odoo/$repo/blob/master/.gitmodules" | grep -q "test";
+            url_data = $(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                    "https://github.com/sosh-odoo/$repo/blob/master/.gitmodules")
             echo "$url_data"
-            if Surl_data then
-            # Trigger repository_dispatch event
-            curl -X POST \
-              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Accept: application/vnd.github.v3+json" \
-              -H "Content-Type: application/json" \
-              -d '{"event_type": "submodule-update"}' \
-              "https://api.github.com/repos/$repo/dispatches"
+            if $url_data | grep -q "test"; then
+              # Trigger repository_dispatch event
+              curl -X POST \
+                -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                -H "Accept: application/vnd.github.v3+json" \
+                -H "Content-Type: application/json" \
+                -d '{"event_type": "submodule-update"}' \
+                "https://api.github.com/repos/$repo/dispatches"
+            fi
           done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
