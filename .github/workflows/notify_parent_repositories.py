@@ -10,7 +10,7 @@ import github
 # Authenticate with GitHub
 print("os.environ", os.environ)
 g = github.Github(os.environ["GITHUB_TOKEN"])
-
+print(dir(g))
 # Get the authenticated user
 user = g.get_user()
 
