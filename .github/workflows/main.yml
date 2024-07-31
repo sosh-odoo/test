@@ -1,0 +1,28 @@
+# .github/workflows/notify-parent.yml
+
+name: Notify Parent
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get parent repository URL
+        run: |
+          PARENT_REPO_URL=$(git config --get remote.origin.url | sed 's/\/[^\/]*$//')
+          echo "PARENT_REPO_URL=$PARENT_REPO_URL" >> $GITHUB_ENV
+
+      - name: Send notification to parent repository
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.PARENT_REPO_TOKEN }}
+          repository: ${{ env.PARENT_REPO_URL }}
+          event-type: submodule-update
+          client-payload: '{"ref": "${GITHUB_REF}"}'
