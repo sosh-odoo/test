@@ -23,13 +23,14 @@ jobs:
           
           # Loop through each repository and trigger a dispatch event
           for repo in $repos; do
-            echo "Processing repository: $repo"
+            #echo "Processing repository: $repo"
 
             # Fetch the content of the .gitmodules file
             url_data=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                            "https://raw.githubusercontent.com/sosh-odoo/$repo/master/.gitmodules")
 
             # Check if the .gitmodules file contains the submodule "test"
+            echo "$url_data"
             if echo "$url_data" | grep -F 'submodule "test"'; then
                 echo "Submodule 'test' found in $repo .gitmodules."
 
