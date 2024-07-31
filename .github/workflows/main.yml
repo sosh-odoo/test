@@ -31,7 +31,7 @@ jobs:
                 -H "Accept: application/vnd.github.v3+json" \
                 -H "Content-Type: application/json" \
                 -d '{"event_type": "submodule-update"}' \
-                "https://api.github.com/repos/$repo/dispatches"
+                "https://api.github.com/repos/sosh-odoo/$repo/dispatches"
             fi
           done
         env:
