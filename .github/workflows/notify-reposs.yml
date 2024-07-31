@@ -3,7 +3,7 @@ name: Notify Parent Repositories
 on:
   push:
     branches:
-      - master  # Change to the default branch of the `test` repository
+      - master
 
 jobs:
   notify:
