@@ -15,7 +15,7 @@ def get_git_request(url,token):
         print("--------------")
         print(f"Response: {reponse}")
     else:
-        print(f"Error: {response.status_code}")
+        print(f"Error: {response}")
     
 def main():
     token = os.environ["GITHUB_TOKEN"]
