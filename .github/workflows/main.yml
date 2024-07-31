@@ -3,23 +3,27 @@ name: Notify Parent Repositories
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Get parent repositories
         run: |
-          PARENT_REPOS=$(gh api /repos/${GITHUB_REPO}/submodule-users | jq -r '.[] | .full_name')
+          echo "Fetching parent repositories..."
+          PARENT_REPOS=$(gh api /repos/${GITHUB_REPO}/submodule-users | jq -r '.[] |.full_name')
+          echo "Parent repositories: $PARENT_REPOS"
           echo "PARENT_REPOS=$PARENT_REPOS" >> $GITHUB_ENV
 
       - name: Notify parent repositories
         run: |
+          echo "Notifying parent repositories..."
           for REPO in $PARENT_REPOS; do
-            echo "${REPO}"
+            echo "Notifying $REPO..."
             gh api --method POST /repos/$REPO/actions/workflows/update-submodule/dispatches --input '{"ref":"main"}'
+            echo "Response: $?"
           done
