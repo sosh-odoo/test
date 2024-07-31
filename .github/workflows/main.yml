@@ -20,5 +20,6 @@ jobs:
       - name: Notify parent repositories
         run: |
           for REPO in $PARENT_REPOS; do
+            echo "${REPO}"
             gh api --method POST /repos/$REPO/actions/workflows/update-submodule/dispatches --input '{"ref":"main"}'
           done
