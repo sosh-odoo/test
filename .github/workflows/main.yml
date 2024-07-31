@@ -3,29 +3,36 @@ name: Notify Parent Repositories
 on:
   push:
     branches:
-      - master
+      - master  # Change to the default branch of the `test` repository
 
 jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout submodule repository
+        uses: actions/checkout@v3
 
-      - name: Get parent repositories
+      - name: Find and notify repositories
         run: |
-          echo "Fetching parent repositories..."
-          PARENT_REPOS=$(git submodule --quiet foreach --recursive 'echo ${PWD##*/}')
-          echo "Parent repositories: $PARENT_REPOS"
-          echo "PARENT_REPOS=$PARENT_REPOS" >> $GITHUB_ENV
+          # Get all repositories for the authenticated user
+          repos=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                   -H "Accept: application/vnd.github.v3+json" \
+                   "https://api.github.com/users/sosh-odoo/repos" \
+                   | jq -r '.[] | .full_name')
 
-      - name: Notify parent repositories
-        run: |
-          echo "Notifying parent repositories..."
-          for REPO in $PARENT_REPOS; do
-            echo "Notifying $REPO..."
-            git clone --recurse-submodules $REPO
-            cd $REPO
-            git submodule update --init --recursive
-            cd ..
+          # Loop through each repository and trigger a dispatch event
+          for repo in $repos; do
+            # Check if the repository contains the submodule
+            if curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                    "https://api.github.com/repos/$repo/contents/.gitmodules" | grep -q "test"; then
+              # Trigger repository_dispatch event
+              curl -X POST \
+                -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                -H "Accept: application/vnd.github.v3+json" \
+                -H "Content-Type: application/json" \
+                -d '{"event_type": "submodule-updated"}' \
+                "https://api.github.com/repos/$repo/dispatches"
+            fi
           done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
