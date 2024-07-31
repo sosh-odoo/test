@@ -9,6 +9,7 @@ jobs:
   master:
     runs-on: ubuntu-latest
     env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PARENT_REPOSITORY: 'sosh-odoo/test2'
       CHECKOUT_BRANCH: 'master'
       PR_AGAINST_BRANCH: 'master'
@@ -19,7 +20,7 @@ jobs:
       id: run_action
       uses: ./
       with: 
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ env.GITHUB_TOKEN }}
         parent_repository: ${{ env.PARENT_REPOSITORY }}
         checkout_branch: ${{ env.CHECKOUT_BRANCH}}
         pr_against_branch: ${{ env.PR_AGAINST_BRANCH }}
