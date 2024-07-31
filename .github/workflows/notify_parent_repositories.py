@@ -13,7 +13,7 @@ print("git hub token:", g)
 # Get the authenticated user
 user = g.get_user()
 print(dir(user))
-print("git hub user:", user.login)
+print("git hub user:", user._login)
 # Loop through each repository and trigger a dispatch event
 for repo in user.get_repos():
     # Check if the repository contains the submodule
