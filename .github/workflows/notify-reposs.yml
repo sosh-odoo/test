@@ -3,7 +3,7 @@ name: Submodule Update
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   notify-parent-repos:
