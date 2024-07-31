@@ -46,6 +46,7 @@ def main():
     query = f'"{SUBMODULE_REPO}"'
     token = os.environ["GITHUB_TOKEN"]
     repos = search_repositories(token, query)
+    print(os.environ)
     submodule_name = os.environ["GITHUB_REPO"].split("/")[-1].replace(".git", "")
 
     with open('parent_repos.txt', 'w') as file:
