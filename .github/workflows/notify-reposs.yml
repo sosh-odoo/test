@@ -16,7 +16,7 @@ jobs:
         run: |
           # Get all repositories for the authenticated user
           repos=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                   -H "Accept: application/vnd.github.v3+json" \
+                   -H "Accept: application/json" \
                    "https://api.github.com/user/repos" \
                    | jq -r '.[] | .full_name')
 
@@ -24,11 +24,11 @@ jobs:
           for repo in $repos; do
             # Check if the repository contains the submodule
             if curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                    "https://api.github.com/repos/$repo/contents/.gitmodules" | jq -e '.content | contains("test")' > /dev/null; then
+                    "https://api.github.com/repos/$repo/contents/.gitmodules" | jq -e '.[] | .content | contains("test")' > /dev/null; then
               # Trigger repository_dispatch event
               curl -X POST \
                 -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                -H "Accept: application/vnd.github.v3+json" \
+                -H "Accept: application/json" \
                 -H "Content-Type: application/json" \
                 -d '{"event_type": "submodule-updated"}' \
                 "https://api.github.com/repos/$repo/dispatches"
