@@ -1,4 +1,4 @@
-name: Notify Parent Repository
+name: Notify Parent Repositories
 
 on:
   push:
@@ -12,17 +12,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get parent repository owner and name
+      - name: Get parent repositories
         run: |
-          PARENT_REPO_OWNER=$(git config -f .git/modules/test/config remote.origin.url | cut -d '/' -f4)
-          PARENT_REPO_NAME=$(git config -f .git/modules/test/config remote.origin.url | cut -d '/' -f5 | cut -d '.' -f1)
-          echo "PARENT_REPO_OWNER=$PARENT_REPO_OWNER" >> $GITHUB_ENV
-          echo "PARENT_REPO_NAME=$PARENT_REPO_NAME" >> $GITHUB_ENV
+          PARENT_REPOS=$(gh api /repos/${GITHUB_REPO}/submodule-users | jq -r '.[] | .full_name')
+          echo "PARENT_REPOS=$PARENT_REPOS" >> $GITHUB_ENV
 
-      - name: Send notification to parent repository
-        uses: peter-evans/repository-dispatch@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ env.PARENT_REPO_OWNER }}/${{ env.PARENT_REPO_NAME }}
-          event-type: submodule-update
-          client-payload: '{"ref": "${GITHUB_REF}"}'
+      - name: Notify parent repositories
+        run: |
+          for REPO in $PARENT_REPOS; do
+            gh api --method POST /repos/$REPO/actions/workflows/update-submodule/dispatches --input '{"ref":"main"}'
+          done
