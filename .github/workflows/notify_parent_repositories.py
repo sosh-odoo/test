@@ -1,51 +1,19 @@
-import os
-import json
-import subprocess
-import sys
-import requests
+from github import Github
 
-# Import PyGithub library
-import github
+# Authentication is defined via github.Auth
+from github import Auth
 
-# Authenticate with GitHub
-g = github.Github("hp_iiRc88rcA1VgzagMP83CSzvyW2xYUC2sfTN6")
+# using an access token
+auth = Auth.Token("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")
 
-print("git hub token:", g)
-# Get the authenticated user
-user = g.get_user()
-print("git hub user:", user)
-# Loop through each repository and trigger a dispatch event
-for repo in user.get_repos():
-    # Check if the repository contains the submodule
-    submodule_response = requests.get(
-        f"https://api.github.com/repos/{repo.full_name}/contents/.gitmodules",
-        headers={
-            "Accept": "application/vnd.github.v3+json",
-            "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
-        },
-    )
+# First create a Github instance:
 
-    if submodule_response.status_code == 200:
-        submodule_content = json.loads(submodule_response.text)
-        if "test" in submodule_content[0]["content"]:
-            # Trigger repository_dispatch event
-            dispatch_response = requests.post(
-                f"https://api.github.com/repos/{repo.full_name}/dispatches",
-                headers={
-                    "Accept": "application/vnd.github.v3+json",
-                    "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
-                    "Content-Type": "application/json",
-                },
-                data=json.dumps({"event_type": "submodule-updated"}),
-            )
+# Public Web Github
+g = Github(auth=auth)
 
-            if dispatch_response.status_code == 201:
-                print(f"Successfully triggered dispatch event for {repo.full_name}")
-            else:
-                print(f"Failed to trigger dispatch event for {repo.full_name}")
-                print(dispatch_response.text)
-        else:
-            print(f"Submodule 'test' not found in {repo.full_name}")
-    else:
-        print(f"Failed to get submodule content for {repo.full_name}")
-        print(submodule_response.text)
+# Github Enterprise with custom hostname
+# g = Github(base_url="https:///api/v3", auth=auth)
+
+# Then play with your Github objects:
+for repo in g.get_user().get_repos():
+    print(repo.name)
