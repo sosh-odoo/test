@@ -22,7 +22,7 @@ jobs:
       - name: Send notification to parent repository
         uses: peter-evans/repository-dispatch@v1
         with:
-          token: ${{ secrets.PARENT_REPO_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ env.PARENT_REPO_URL }}
           event-type: submodule-update
           client-payload: '{"ref": "${GITHUB_REF}"}'
