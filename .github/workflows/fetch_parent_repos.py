@@ -2,15 +2,14 @@ import os, requests
 
 # Constants
 GITHUB_API_URL = "https://api.github.com"
-ACCESS_TOKEN = os.environ["GITHUB_TOKEN"]
 SUBMODULE_REPO = "test"
 
-def search_repositories(query):
+def search_repositories(token, query):
     """Search GitHub repositories using a query."""
     print("os", os.environ)
     url = f"https://api.github.com/search/repositories?q={query}"
     headers = {
-        "Authorization": f"token {ACCESS_TOKEN}",
+        "Authorization": f"token {token}",
         "Accept": "application/vnd.github.v3+json",
     }
     response = requests.get(url, headers=headers)
@@ -24,7 +23,8 @@ def search_repositories(query):
 def main():
     # Replace this query with an appropriate one for finding repositories
     query = f'"{SUBMODULE_REPO}"'
-    repos = search_repositories(query)
+    token = os.environ["GITHUB_TOKEN"]
+    repos = search_repositories(token, query)
     
     with open('parent_repos.txt', 'w') as file:
         for repo in repos:
