@@ -24,8 +24,9 @@ jobs:
           for repo in $repos; do
             # Check if the repository contains the submodule
             # Check if the .gitmodules file contains the submodule "test"
-            if curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                       "https://raw.githubusercontent.com/sosh-odoo/$repo/master/.gitmodules" | grep -F 'submodule "test"'; then
+            url_data=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                       "https://raw.githubusercontent.com/sosh-odoo/$repo/master/.gitmodules" | grep -F 'submodule "test"')
+            if $url_data; then
                 # Trigger repository_dispatch event
                 result=$(curl -L \
                             -X POST \
@@ -42,7 +43,7 @@ jobs:
                     echo "Dispatch triggered successfully."
                 fi
             else
-                echo "Submodule 'test' not found in .gitmodules."
+                echo "Submodule 'test' not found in $repo .gitmodules."
             fi
           done
         env:
