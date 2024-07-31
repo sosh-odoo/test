@@ -30,7 +30,6 @@ jobs:
                            "https://raw.githubusercontent.com/$repo/master/.gitmodules")
 
             # Check if the .gitmodules file contains the submodule "test"
-            echo "$url_data"
             if echo "$url_data" | grep -F 'submodule "test"'; then
                 echo "Submodule 'test' found in $repo .gitmodules."
 
@@ -44,6 +43,7 @@ jobs:
                             "https://api.github.com/repos/$repo/dispatches")
                 
                 # Optional: Check if the result contains any errors
+                echo "$result"
                 if echo "$result" | grep -q '"message":'; then
                     echo "Error triggering dispatch: $result"
                 else
