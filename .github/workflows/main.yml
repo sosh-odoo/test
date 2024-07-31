@@ -23,16 +23,26 @@ jobs:
           # Loop through each repository and trigger a dispatch event
           for repo in $repos; do
             # Check if the repository contains the submodule
+            # Check if the .gitmodules file contains the submodule "test"
             if curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              "https://raw.githubusercontent.com/sosh-odoo/$repo/master/.gitmodules" | grep -F 'submodule "test"'; then
-              # Trigger repository_dispatch event
-              result = $(curl -L \
-                -X POST \
-                -H "Accept: application/vnd.github+json" \
-                -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                -H "X-GitHub-Api-Version: 2022-11-28" \
-                https://api.github.com/repos/sosh-odoo/$repo/dispatches \
-                -d '{"event_type":"submodule-update"}')
+                       "https://raw.githubusercontent.com/sosh-odoo/$repo/master/.gitmodules" | grep -F 'submodule "test"'; then
+                # Trigger repository_dispatch event
+                result=$(curl -L \
+                            -X POST \
+                            -H "Accept: application/vnd.github+json" \
+                            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                            -H "X-GitHub-Api-Version: 2022-11-28" \
+                            https://api.github.com/repos/sosh-odoo/$repo/dispatches \
+                            -d '{"event_type":"submodule-update"}')
+            
+                # Optional: Check if the result contains any errors
+                if echo "$result" | grep -q '"message":'; then
+                    echo "Error triggering dispatch: $result"
+                else
+                    echo "Dispatch triggered successfully."
+                fi
+            else
+                echo "Submodule 'test' not found in .gitmodules."
             fi
           done
         env:
