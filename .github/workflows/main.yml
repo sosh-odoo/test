@@ -1,6 +1,4 @@
-# .github/workflows/notify-parent.yml
-
-name: Notify Parent
+name: Notify Parent Repository
 
 on:
   push:
@@ -14,16 +12,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get parent repository URL
+      - name: Get parent repository owner and name
         run: |
-          PARENT_REPO_URL=$(git config --get remote.origin.url | sed 's/\/[^\/]*$//')
-          echo "PARENT_REPO_URL=$PARENT_REPO_URL" >> $GITHUB_ENV
-          echo "parent repo ${PARENT_REPO_URL}"
+          PARENT_REPO_OWNER=$(git config -f .git/modules/test/config remote.origin.url | cut -d '/' -f4)
+          PARENT_REPO_NAME=$(git config -f .git/modules/test/config remote.origin.url | cut -d '/' -f5 | cut -d '.' -f1)
+          echo "PARENT_REPO_OWNER=$PARENT_REPO_OWNER" >> $GITHUB_ENV
+          echo "PARENT_REPO_NAME=$PARENT_REPO_NAME" >> $GITHUB_ENV
 
       - name: Send notification to parent repository
         uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ env.PARENT_REPO_URL }}
+          repository: ${{ env.PARENT_REPO_OWNER }}/${{ env.PARENT_REPO_NAME }}
           event-type: submodule-update
           client-payload: '{"ref": "${GITHUB_REF}"}'
