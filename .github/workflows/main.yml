@@ -34,7 +34,6 @@ jobs:
               -H "Content-Type: application/json" \
               -d '{"event_type": "submodule-update"}' \
               "https://api.github.com/repos/$repo/dispatches"
-            fi
           done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
