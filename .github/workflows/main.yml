@@ -1,0 +1,31 @@
+name: Notify Parent Repositories
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get parent repositories
+        run: |
+          echo "Fetching parent repositories..."
+          PARENT_REPOS=$(git submodule foreach --recursive 'git config --get remote.origin.url')
+          echo "Parent repositories: $PARENT_REPOS"
+          echo "PARENT_REPOS=$PARENT_REPOS" >> $GITHUB_ENV
+
+      - name: Notify parent repositories
+        run: |
+          echo "Notifying parent repositories..."
+          for REPO in $PARENT_REPOS; do
+            echo "Notifying $REPO..."
+            git clone --recurse-submodules $REPO
+            cd $REPO
+            git submodule update --init --recursive
+            cd ..
+          done
