@@ -27,7 +27,7 @@ jobs:
 
             # Fetch the content of the .gitmodules file
             url_data=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                           "https://raw.githubusercontent.com/sosh-odoo/$repo/master/.gitmodules")
+                           "https://raw.githubusercontent.com/$repo/master/.gitmodules")
 
             # Check if the .gitmodules file contains the submodule "test"
             echo "$url_data"
