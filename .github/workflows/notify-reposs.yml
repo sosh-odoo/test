@@ -16,7 +16,7 @@ jobs:
         run: |
           python3 -mvenv venv
           source venv/bin/activate
-          pip install -r requirements.txt
-          python3 .github/workflows/notify_parent_repositories.py
+          pip install -r.github/requirements.txt
+          python3.github/workflows/notify_parent_repositories.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
