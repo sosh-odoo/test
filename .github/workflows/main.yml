@@ -6,19 +6,21 @@ on:
       - master
 
 jobs:
-  test:
+  master:
     runs-on: ubuntu-latest
     env:
       PARENT_REPOSITORY: 'sosh-odoo/test2'
       CHECKOUT_BRANCH: 'master'
+      PR_AGAINST_BRANCH: 'master'
       OWNER: 'sosh-odoo'
     steps:
     - uses: actions/checkout@v2
-    - name: update submodule
-      id: update_submodule
+    - name: run action
+      id: run_action
       uses: ./
       with: 
         github_token: ${{ secrets.GITHUB_TOKEN }}
         parent_repository: ${{ env.PARENT_REPOSITORY }}
         checkout_branch: ${{ env.CHECKOUT_BRANCH}}
+        pr_against_branch: ${{ env.PR_AGAINST_BRANCH }}
         owner: ${{ env.OWNER }}
