@@ -8,6 +8,8 @@ on:
 jobs:
   notify:
     runs-on: ubuntu-latest
+    permissions:
+      repositories: 'read'
     steps:
       - name: Checkout submodule repository
         uses: actions/checkout@v3
@@ -16,14 +18,14 @@ jobs:
         run: |
           # Get all repositories for the authenticated user
           response=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                   -H "Accept: application/json" \
+                   -H "Accept: application/vnd.github.v3+json" \
                    "https://api.github.com/user/repos")
 
           echo "API Response:"
           echo "$response"
 
           # Parse the JSON response
-          repos=$(echo "$response" | jq -r '.[] |.full_name')
+          repos=$(echo "$response" | jq -r '.[] | .full_name')
 
           echo "Parsed Repositories:"
           echo "$repos"
@@ -37,11 +39,11 @@ jobs:
             echo "Submodule Response for $repo:"
             echo "$submodule_response"
 
-            if echo "$submodule_response" | jq -e '.[] |.content | contains("test")' > /dev/null; then
+            if echo "$submodule_response" | jq -e '.[] | .content | contains("test")' > /dev/null; then
               # Trigger repository_dispatch event
               dispatch_response=$(curl -X POST \
                 -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                -H "Accept: application/json" \
+                -H "Accept: application/vnd.github.v3+json" \
                 -H "Content-Type: application/json" \
                 -d '{"event_type": "submodule-updated"}' \
                 "https://api.github.com/repos/$repo/dispatches")
