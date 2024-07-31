@@ -34,14 +34,14 @@ jobs:
                 echo "Submodule 'test' found in $repo .gitmodules."
 
                 # Trigger repository_dispatch event
-                curl -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" -d '{"event_type":"submodule-update"}' "https://api.github.com/repos/$repo/dispatches"
-                # Optional: Check if the result contains any errors
-                # echo "$result"
-                # if echo "$result" | grep -q '"message":'; then
-                #     echo "Error triggering dispatch: $result"
-                # else
-                #     echo "Dispatch triggered successfully for $repo."
-                # fi
+                result=$(curl -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" -d '{"event_type":"submodule-update"}' "https://api.github.com/repos/sosh-odoo/test2/dispatches") 
+                Optional: Check if the result contains any errors
+                echo "$result"
+                if echo "$result" | grep -q '"message":'; then
+                    echo "Error triggering dispatch: $result"
+                else
+                    echo "Dispatch triggered successfully for $repo."
+                fi
             else
                 echo "Submodule 'test' not found in $repo .gitmodules."
             fi
