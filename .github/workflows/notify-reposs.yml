@@ -32,5 +32,5 @@ jobs:
                  -H "Authorization: token $GITHUB_TOKEN" \
                  -H "Accept: application/vnd.github.v3+json" \
                  -d '{"ref":"main"}' \
-                 https://api.github.com/repos/$repo/actions/workflows/update-submodule.yml/dispatches
+                 https://api.github.com/repos/$repo/actions/workflows/updatesubmodule.yml/dispatches
           done
