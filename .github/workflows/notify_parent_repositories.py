@@ -19,7 +19,7 @@ def get_git_request(url,token):
     
 def main():
     token = os.environ["GITHUB_TOKEN"]
-    url = "https://api.github.com/users/repos"
+    url = "https://api.github.com/sosh-odoo/repos"
     get_git_request(url, token)
 
 if __name__ == "__main__":
