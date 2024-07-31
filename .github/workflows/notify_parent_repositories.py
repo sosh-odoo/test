@@ -8,6 +8,7 @@ import requests
 import github
 
 # Authenticate with GitHub
+print(os.environ["GITHUB_TOKEN"])
 g = github.Github(os.environ["GITHUB_TOKEN"])
 print("git hub token:", g)
 # Get the authenticated user
