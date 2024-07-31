@@ -15,22 +15,39 @@ jobs:
       - name: Find and notify repositories
         run: |
           # Get all repositories for the authenticated user
-          repos=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          response=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                    -H "Accept: application/json" \
-                   "https://api.github.com/user/repos" | jq -j '.[] | .full_name')
+                   "https://api.github.com/user/repos")
+
+          echo "API Response:"
+          echo "$response"
+
+          # Parse the JSON response
+          repos=$(echo "$response" | jq -r '.[] |.full_name')
+
+          echo "Parsed Repositories:"
+          echo "$repos"
 
           # Loop through each repository and trigger a dispatch event
           for repo in $repos; do
             # Check if the repository contains the submodule
-            if curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                    "https://api.github.com/repos/$repo/contents/.gitmodules" | jq -e '.[] | .content | contains("test")' > /dev/null; then
+            submodule_response=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                    "https://api.github.com/repos/$repo/contents/.gitmodules")
+
+            echo "Submodule Response for $repo:"
+            echo "$submodule_response"
+
+            if echo "$submodule_response" | jq -e '.[] |.content | contains("test")' > /dev/null; then
               # Trigger repository_dispatch event
-              curl -X POST \
+              dispatch_response=$(curl -X POST \
                 -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                 -H "Accept: application/json" \
                 -H "Content-Type: application/json" \
                 -d '{"event_type": "submodule-updated"}' \
-                "https://api.github.com/repos/$repo/dispatches"
+                "https://api.github.com/repos/$repo/dispatches")
+
+              echo "Dispatch Response for $repo:"
+              echo "$dispatch_response"
             fi
           done
         env:
