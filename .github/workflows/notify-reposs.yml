@@ -1,22 +1,30 @@
-name: Notify Parent Repositories
+name: Submodule Update
 
 on:
   push:
     branches:
-      - master  # Change to the default branch of the `test` repository
+      - main
 
 jobs:
-  notify:
+  notify-parent-repos:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout submodule repository
+      - name: Checkout Submodule Repository
         uses: actions/checkout@v3
 
-      - name: Run Python script
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fetch Parent Repositories
+        id: fetch_repos
         run: |
-          python3 -mvenv venv
-          source venv/bin/activate
-          pip install -r.github/requirements.txt
-          python3 .github/workflows/notify_parent_repositories.py
+          # Use a script or external API to get the list of parent repositories
+          python fetch_parent_repos.py
+
+      - name: Trigger Workflows in Parent Repositories
+        run: |
+          repos=$(cat parent_repos.txt)  # Assume repos are listed in parent_repos.txt
+          for repo in $repos; do
+            curl -X POST \
+                 -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                 -H "Accept: application/vnd.github.v3+json" \
+                 -d '{"ref":"main"}' \
+                 https://api.github.com/repos/$repo/actions/workflows/update-submodule.yml/dispatches
+          done
