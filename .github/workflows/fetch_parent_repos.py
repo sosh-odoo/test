@@ -1,9 +1,23 @@
-import os, requests
+import os
+import requests
 from github import Github
 
 # Constants
 GITHUB_API_URL = "https://api.github.com"
 SUBMODULE_REPO = "test"
+
+def get_parent_repositories(token, submodule_name):
+    """Get parent repositories of a submodule."""
+    query = f'"{submodule_name}"'
+    repos = search_repositories(token, query)
+    parent_repos = []
+
+    for repo in repos:
+        repo_owner, repo_name = repo["full_name"].split("/")
+        if is_submodule(token, repo_owner, repo_name, submodule_name):
+            parent_repos.append(repo["full_name"])
+
+    return parent_repos
 
 def search_repositories(token, query):
     """Search GitHub repositories using a query."""
@@ -15,18 +29,17 @@ def search_repositories(token, query):
     response = requests.get(url, headers=headers)
     
     if response.status_code == 200:
-        repos =  response.json()["items"]
-        return repos
+        return response.json()["items"]
     else:
         print(f"Failed to search repositories: {response.status_code} - {response.text}")
         return []
 
-def search_submodule(github_token, repo_owner, repo_name, submodule_name):
+def is_submodule(github_token, repo_owner, repo_name, submodule_name):
+    """Check if a repository contains a submodule."""
     g = Github(github_token)
     repo = g.get_repo(f"{repo_owner}/{repo_name}")
     contents = repo.get_contents("")
-    submodule_found = False
-
+    
     while contents:
         file_content = contents.pop(0)
         if file_content.type == 'dir':
@@ -37,23 +50,18 @@ def search_submodule(github_token, repo_owner, repo_name, submodule_name):
                     if file_content.raw_data.get("submodule_git_url") is not None:
                         src = file_content.raw_data.get("submodule_git_url").split("/")[-1].replace(".git", "")
                         if src == submodule_name:
-                            submodule_found = True
-                            break
+                            return True
 
-    return submodule_found
+    return False
 
 def main():
-    query = f'"{SUBMODULE_REPO}"'
     token = os.environ["GITHUB_TOKEN"]
-    repos = search_repositories(token, query)
-    print(os.environ)
     submodule_name = os.environ["GITHUB_REPOSITORY"].split("/")[-1].replace(".git", "")
+    parent_repos = get_parent_repositories(token, submodule_name)
 
     with open('parent_repos.txt', 'w') as file:
-        for repo in repos:
-            repo_owner, repo_name = repo["full_name"].split("/")
-            if search_submodule(token, repo_owner, repo_name, submodule_name):
-                file.write(f"{repo['full_name']}\n")
+        for repo in parent_repos:
+            file.write(f"{repo}\n")
 
 if __name__ == "__main__":
     main()
