@@ -4,7 +4,7 @@ import json
 def get_git_request(url,token):
     headers = {
         "Accept": "application/vnd.github.v3+json",
-        "Authorization": f"Bearer {token}",
+        "Authorization": f"token {token}",
     }
 
     response = requests.get(url, headers=headers)
