@@ -27,11 +27,10 @@ jobs:
 
             # Fetch the content of the .gitmodules file
             url_data=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                           "https://raw.githubusercontent.com/sosh-odoo/$repo/master/.gitmodules" \
-                           | grep -F 'submodule "test"')
+                           "https://raw.githubusercontent.com/sosh-odoo/$repo/master/.gitmodules")
 
-            # Check if the grep command found the submodule "test"
-            if [ -n "$url_data" ]; then
+            # Check if the .gitmodules file contains the submodule "test"
+            if echo "$url_data" | grep -F 'submodule "test"'; then
                 echo "Submodule 'test' found in $repo .gitmodules."
 
                 # Trigger repository_dispatch event
