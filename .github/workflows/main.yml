@@ -21,6 +21,8 @@ jobs:
                        | jq -r '.[] | .full_name')
           echo "$repos"
           
+      - name: Access the repos
+        run: |
           # Loop through each repository and trigger a dispatch event
           for repo in $repos; do
             echo "Processing repository: $repo"
