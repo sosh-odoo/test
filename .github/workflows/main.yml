@@ -55,10 +55,10 @@ jobs:
                               
                 # Extract workflow ID using jq
                 workflow_id=$(echo "$result" | jq -r '.workflows[0].id')
-                
+                echo "$workflow_id"
                 # Output the workflow ID to a file
                 echo "$workflow_id" > workflow_id.txt
-                echo "$workfloe_id"
+                
             else
                 echo "Submodule 'test' not found in $repo .gitmodules."
             fi
