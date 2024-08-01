@@ -12,19 +12,20 @@ jobs:
       - name: Checkout submodule repository
         uses: actions/checkout@v3
 
-      - name: Find and notify repositories
+      - name: Find and export repositories
+        id: find_repos
         run: |
           # Get all repositories for the authenticated user
           repos=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                        -H "Accept: application/vnd.github.v3+json" \
                        "https://api.github.com/users/sosh-odoo/repos" \
                        | jq -r '.[] | .full_name')
-          echo "$repos"
+          echo "REPOS=$repos" >> $GITHUB_ENV
           
-      - name: Access the repos
+      - name: Access the repos and trigger dispatch
         run: |
           # Loop through each repository and trigger a dispatch event
-          for repo in $repos; do
+          for repo in $REPOS; do
             echo "Processing repository: $repo"
 
             # Fetch the content of the .gitmodules file
@@ -41,11 +42,11 @@ jobs:
                             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                             -H "X-GitHub-Api-Version: 2022-11-28" \
                             -d '{"event_type":"submodule-update"}' \
-                            "https://api.github.com/repos/sosh-odoo/test2/dispatches")
+                            "https://api.github.com/repos/$repo/dispatches")
                 
                 # Optional: Check if the result contains any errors
                 if echo "$result" | grep -q '"message":'; then
-                    echo "Error triggering dispatch: $result"
+                    echo "Error triggering dispatch for $repo: $result"
                 else
                     echo "Dispatch triggered successfully for $repo."
                 fi
