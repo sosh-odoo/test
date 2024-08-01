@@ -65,7 +65,7 @@ jobs:
                         -H "X-GitHub-Api-Version: 2022-11-28" \
                         $dispatch_url \
                         -d '{"ref":"master"}')
-                echo "$output_data"
+                echo "OUTPUT: $output_data"
             else
                 echo "Submodule 'test' not found in $repo .gitmodules."
             fi
