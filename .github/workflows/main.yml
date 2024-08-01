@@ -31,7 +31,7 @@ jobs:
 
             # Check if the .gitmodules file contains the submodule "test"
             if echo "$url_data" | grep -F 'submodule "test"'; then
-                echo "Submodule 'test' found in $repo .gitmodules."
+                echo "Submodule 'test' present in .gitmodules of $repo"
 
                 # Trigger repository_dispatch event
                 result=$(curl -L -X POST \
@@ -39,7 +39,7 @@ jobs:
                             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                             -H "X-GitHub-Api-Version: 2022-11-28" \
                             -d '{"event_type":"submodule-update"}' \
-                            "https://api.github.com/repos/$repo/dispatches")
+                            "https://api.github.com/repos/sosh-odoo/test2/dispatches")
                 
                 # Optional: Check if the result contains any errors
                 if echo "$result" | grep -q '"message":'; then
