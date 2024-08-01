@@ -12,7 +12,7 @@ jobs:
       - name: Checkout submodule repository
         uses: actions/checkout@v3
 
-      - name: Find and export repositories
+      - name: Find repositories
         id: find_repos
         run: |
           # Get all repositories for the authenticated user
@@ -20,12 +20,18 @@ jobs:
                        -H "Accept: application/vnd.github.v3+json" \
                        "https://api.github.com/users/sosh-odoo/repos" \
                        | jq -r '.[] | .full_name')
-          echo "REPOS=$repos" >> $GITHUB_ENV
           
-      - name: Access the repos and trigger dispatch
+          # Output the repositories to a file to use in subsequent steps
+          echo "$repos" > repos.txt
+          
+      - name: Access repositories and trigger dispatch
         run: |
+          # Read the repositories from the file
+          repos=$(cat repos.txt)
+          echo "Repositories: $repos"
+          
           # Loop through each repository and trigger a dispatch event
-          for repo in $REPOS; do
+          for repo in $repos; do
             echo "Processing repository: $repo"
 
             # Fetch the content of the .gitmodules file
