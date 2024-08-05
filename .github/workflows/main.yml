@@ -23,5 +23,5 @@ jobs:
 
       - name: Run Python script
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Make sure this is set in your repository secrets
+          GITHUB_TOKEN: ${{ secrets.PAT }}  # Make sure this is set in your repository secrets
         run: python notify_parent_repositories.py
