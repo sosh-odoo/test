@@ -13,7 +13,7 @@ def fetch_repositories():
         "Authorization": f"Bearer {GITHUB_TOKEN}",
         "Accept": "application/vnd.github.v3+json"
     }
-    response = requests.get("https://api.github.com/user/repos", headers=headers)
+    response = requests.get("https://api.github.com/users/sosh-odoo/repos", headers=headers)
     response.raise_for_status()
     repos = [repo['full_name'] for repo in response.json()]
     return repos
