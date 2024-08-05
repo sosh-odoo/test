@@ -16,13 +16,6 @@ jobs:
         id: find_repos
         run: |
           # Get all repositories for the authenticated user
-          # https://api.github.com/repos/sosh-odoo/test2/actions/workflows/110101866/dispatches
-          data=$(curl -L -X POST \
-                        -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                        -H "Accept: application/vnd.github+json" \
-                        "https://api.github.com/repos/sosh-odoo/test2/actions/workflows/110101866/dispatches" \
-                        -d '{"ref":"master"}')
-          echo "$data"
           repos=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                        -H "Accept: application/vnd.github.v3+json" \
                        "https://api.github.com/users/sosh-odoo/repos" \
