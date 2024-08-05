@@ -3,11 +3,12 @@ name: Notify Parent Repositories
 on:
   push:
     branches:
-      - master  # Change to the default branch of the `test` repository
+      - master  # Change this if needed
 
 jobs:
   notify:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -15,13 +16,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'  # Specify the Python version you want
+          python-version: '3.8'  # Specify the Python version you want
 
       - name: Install dependencies
         run: |
-          pip install requests  # Install the requests library
+          pip install -r requirements.txt  # Install dependencies from a requirements.txt file if you have one
 
       - name: Run Python script
         env:
-          GITHUB_TOKEN: ${{ secrets.pat_token }}  # Make sure this is set in your repository secrets
+          GITHUB_TOKEN: ${{ secrets.PAT }}  # Use the secret here
         run: python notify_parent_repositories.py
