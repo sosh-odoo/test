@@ -3,7 +3,7 @@ import requests
 import json
 
 # Fetch GitHub token from environment variable
-GITHUB_TOKEN = os.getenv('PAT')
+GITHUB_TOKEN = os.getenv('PERSONAL_ACCESS_TOKEN')
 if not GITHUB_TOKEN:
     raise ValueError("GITHUB_TOKEN environment variable not set")
 
