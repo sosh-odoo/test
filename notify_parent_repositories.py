@@ -3,16 +3,19 @@ import requests
 import json
 
 # Fetch GitHub token from environment variable
-GITHUB_TOKEN = os.getenv('PERSONAL_ACCESS')
+GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')  # Make sure the environment variable name matches
+
 if not GITHUB_TOKEN:
     raise ValueError("GITHUB_TOKEN environment variable not set")
 
+# Headers for GitHub API requests
+headers = {
+    "Authorization": f"Bearer {GITHUB_TOKEN}",
+    "Accept": "application/vnd.github.v3+json"
+}
+
 # Fetch repositories
 def fetch_repositories():
-    headers = {
-        "Authorization": f"Bearer {GITHUB_TOKEN}",
-        "Accept": "application/vnd.github.v3+json"
-    }
     response = requests.get("https://api.github.com/users/sosh-odoo/repos", headers=headers)
     response.raise_for_status()
     repos = [repo['full_name'] for repo in response.json()]
@@ -20,10 +23,7 @@ def fetch_repositories():
 
 # Check if a repository has a specific submodule
 def has_submodule(repo):
-    headers = {
-        "Authorization": f"Bearer {GITHUB_TOKEN}"
-    }
-    response = requests.get(f"https://raw.githubusercontent.com/{repo}/master/.gitmodules", headers=headers)
+    response = requests.get(f"https://raw.githubusercontent.com/{repo}/HEAD/.gitmodules", headers=headers)
     if response.status_code == 200:
         content = response.text
         return 'submodule "test"' in content
@@ -31,14 +31,12 @@ def has_submodule(repo):
 
 # Trigger workflow dispatch
 def trigger_dispatch(repo):
-    headers = {
-        "Authorization": f"Bearer {GITHUB_TOKEN}",
-        "Accept": "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28"
-    }
+    workflow_headers = headers.copy()
+    workflow_headers["Accept"] = "application/vnd.github+json"
+    workflow_headers["X-GitHub-Api-Version"] = "2022-11-28"
     
     # Get workflows
-    response = requests.get(f"https://api.github.com/repos/{repo}/actions/workflows", headers=headers)
+    response = requests.get(f"https://api.github.com/repos/{repo}/actions/workflows", headers=workflow_headers)
     response.raise_for_status()
     workflows = response.json().get('workflows', [])
     if not workflows:
@@ -48,9 +46,9 @@ def trigger_dispatch(repo):
     workflow_id = workflows[0]['id']
     dispatch_url = f"https://api.github.com/repos/{repo}/actions/workflows/{workflow_id}/dispatches"
     data = {
-        "ref": "master"
+        "ref": "HEAD"  # Using HEAD to cover different default branches
     }
-    dispatch_response = requests.post(dispatch_url, headers=headers, data=json.dumps(data))
+    dispatch_response = requests.post(dispatch_url, headers=workflow_headers, data=json.dumps(data))
     if dispatch_response.status_code == 204:
         print(f"Dispatched workflow for {repo}")
     else:
