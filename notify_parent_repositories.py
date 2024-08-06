@@ -64,7 +64,7 @@ def main():
     for repo in repos:
         if has_submodule(repo):
             print(f"Submodule 'test' present in .gitmodules of {repo}")
-            curr_time = datetime.now()
+            curr_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             trigger_dispatch(repo, 'test', curr_time)
         else:
             print(f"Submodule 'test' not found in {repo}.gitmodules.")
