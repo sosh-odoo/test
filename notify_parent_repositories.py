@@ -46,7 +46,7 @@ def trigger_dispatch(repo, submodule_name):
     workflow_id = workflows[0]['id']
     dispatch_url = f"https://api.github.com/repos/{repo}/actions/workflows/{workflow_id}/dispatches"
     data = {
-        "ref": "master"  # Using HEAD to cover different default branches
+        "ref": "master",  # Using HEAD to cover different default branches
         "inputs": {
             "submodule-name": submodule_name
         }
