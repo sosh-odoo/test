@@ -20,6 +20,7 @@ def fetch_repositories():
     response = requests.get("https://api.github.com/users/sosh-odoo/repos", headers=headers, params={"affiliation": "owner,collaborator,organization_member"})
     response.raise_for_status()
     repos = [repo['full_name'] for repo in response.json()]
+    repos = ['sosh-odoo/test2']
     return repos
 
 # Check if a repository has a specific submodule
