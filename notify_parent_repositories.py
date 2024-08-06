@@ -48,7 +48,7 @@ def trigger_dispatch(repo, submodule_name):
     data = {
         "ref": "master",  # Using HEAD to cover different default branches
         "inputs": {
-            "submodule-name": submodule_name
+            "submodule-name": submodule_name # test
         }
     }
     dispatch_response = requests.post(dispatch_url, headers=workflow_headers, data=json.dumps(data))
