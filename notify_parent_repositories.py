@@ -17,7 +17,7 @@ headers = {
 
 # Fetch repositories
 def fetch_repositories():
-    response = requests.get("https://api.github.com/users/sosh-odoo/repos", headers=headers)
+    response = requests.get("https://api.github.com/users/sosh-odoo/repos", headers=headers, params={"visibility": "all"})
     response.raise_for_status()
     repos = [repo['full_name'] for repo in response.json()]
     return repos
