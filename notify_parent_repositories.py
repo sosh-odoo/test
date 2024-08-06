@@ -65,6 +65,7 @@ def main():
         if has_submodule(repo):
             print(f"Submodule 'test' present in .gitmodules of {repo}")
             curr_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            # sending current time to update in commit message
             trigger_dispatch(repo, 'test', curr_time)
         else:
             print(f"Submodule 'test' not found in {repo}.gitmodules.")
