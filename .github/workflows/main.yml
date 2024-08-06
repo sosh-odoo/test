@@ -24,5 +24,5 @@ jobs:
 
       - name: Run Python script
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use the secret here
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_DISPATCH_TOKEN }}  # Use the secret here
         run: python notify_parent_repositories.py
