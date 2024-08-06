@@ -1,6 +1,7 @@
 import os
 import requests
 import json
+from datetime import datetime
 
 # Fetch GitHub token from environment variable
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')  # Make sure the environment variable name matches
@@ -62,7 +63,8 @@ def main():
     for repo in repos:
         if has_submodule(repo):
             print(f"Submodule 'test' present in .gitmodules of {repo}")
-            trigger_dispatch(repo, 'test')
+            now = datetime.now()
+            trigger_dispatch(repo, 'test', now)
         else:
             print(f"Submodule 'test' not found in {repo}.gitmodules.")
 
