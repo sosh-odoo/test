@@ -46,7 +46,7 @@ def trigger_dispatch(repo):
     workflow_id = workflows[0]['id']
     dispatch_url = f"https://api.github.com/repos/{repo}/actions/workflows/{workflow_id}/dispatches"
     data = {
-        "ref": "HEAD"  # Using HEAD to cover different default branches
+        "ref": "master"  # Using HEAD to cover different default branches
     }
     dispatch_response = requests.post(dispatch_url, headers=workflow_headers, data=json.dumps(data))
     if dispatch_response.status_code == 204:
