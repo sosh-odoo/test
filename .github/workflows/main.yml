@@ -3,7 +3,7 @@ name: Notify Parent Repositories
 on:
   push:
     branches:
-      - master  # Change this if needed
+      - master
 
 jobs:
   notify:
