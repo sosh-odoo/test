@@ -30,7 +30,7 @@ def has_submodule(repo):
     return False
 
 # Trigger workflow dispatch
-def trigger_dispatch(repo):
+def trigger_dispatch(repo, submodule_name):
     workflow_headers = headers.copy()
     workflow_headers["Accept"] = "application/vnd.github+json"
     workflow_headers["X-GitHub-Api-Version"] = "2022-11-28"
@@ -47,6 +47,9 @@ def trigger_dispatch(repo):
     dispatch_url = f"https://api.github.com/repos/{repo}/actions/workflows/{workflow_id}/dispatches"
     data = {
         "ref": "master"  # Using HEAD to cover different default branches
+        "inputs": {
+            "submodule-name": submodule_name
+        }
     }
     dispatch_response = requests.post(dispatch_url, headers=workflow_headers, data=json.dumps(data))
     if dispatch_response.status_code == 204:
@@ -59,7 +62,7 @@ def main():
     for repo in repos:
         if has_submodule(repo):
             print(f"Submodule 'test' present in .gitmodules of {repo}")
-            trigger_dispatch(repo)
+            trigger_dispatch(repo, 'test')
         else:
             print(f"Submodule 'test' not found in {repo}.gitmodules.")
 
